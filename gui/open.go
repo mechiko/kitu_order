@@ -1,0 +1,39 @@
+package gui
+
+import (
+	"fmt"
+
+	"github.com/mechiko/utility"
+)
+
+// открываем в браузере ссылку
+func Open(url string) error {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("panic %v", r)
+		}
+	}()
+
+	if url == "" {
+		return fmt.Errorf("пустой url")
+	}
+	if err := utility.OpenHttpLinkInShell(url); err != nil {
+		return err
+	}
+	return nil
+}
+
+// открываем в эксплорере текущую папку программы
+func OpenDir(dir string) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("panic %v", r)
+		}
+	}()
+	if utility.PathOrFileExists(dir) {
+		if err := utility.OpenFileInShell(dir); err != nil {
+			return err
+		}
+	}
+	return nil
+}
