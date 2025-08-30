@@ -6,6 +6,12 @@ import (
 
 // вызывается каждый раз при создании объекта
 func (r *DbZnak) Check() (err error) {
+	if r == nil {
+		return fmt.Errorf("%s check: receiver is nil", modError)
+	}
+	if r.dbInfo == nil {
+		return fmt.Errorf("%s check: dbInfo is nil", modError)
+	}
 	if !r.dbInfo.Exists {
 		return fmt.Errorf("%s dbInfo.Exists false", modError)
 	}

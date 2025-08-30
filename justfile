@@ -4,7 +4,7 @@ shebang := 'pwsh.exe'
 # Variables
 exe_name := "kituorder"
 mod_name := "kitu"
-ld_flags :="-H=windowsgui -s -w -X 'kitu/entity.Mode=production'"
+ld_flags :="-H=windowsgui -s -w -X 'kitu/config.Mode=production'"
 
 default:
   just --list

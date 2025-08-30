@@ -1,6 +1,7 @@
 package process
 
 import (
+	"errors"
 	"fmt"
 	"kitu/reductor"
 	"kitu/repo/znakdb"
@@ -11,9 +12,14 @@ import (
 func (k *Krinica) WritePallets() error {
 	db, err := k.repo.Lock(dbscan.TrueZnak)
 	if err != nil {
-		return fmt.Errorf("%w", err)
+		return fmt.Errorf("lock TrueZnak: %w", err)
 	}
-	defer k.repo.Unlock(db)
+	var retErr error
+	defer func() {
+		if uerr := k.repo.Unlock(db); uerr != nil {
+			retErr = errors.Join(retErr, fmt.Errorf("unlock TrueZnak: %w", uerr))
+		}
+	}()
 
 	dbZnak, ok := db.(*znakdb.DbZnak)
 	if !ok {
@@ -24,5 +30,5 @@ func (k *Krinica) WritePallets() error {
 	if err := dbZnak.WritePallets(k.Pallet, model); err != nil {
 		return err
 	}
-	return nil
+	return retErr
 }

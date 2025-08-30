@@ -6,7 +6,9 @@ import (
 
 // вызывается каждый раз при создании объекта
 func (r *DbConfig) Check() (err error) {
-
+	if r == nil {
+		return fmt.Errorf("%s check: receiver is nil", modError)
+	}
 	if r.dbInfo == nil {
 		return fmt.Errorf("%s dbInfo is nil", modError)
 	}

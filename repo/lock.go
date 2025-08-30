@@ -29,14 +29,14 @@ func (r *Repository) Lock(t dbscan.DbInfoType) (domain.RepoDB, error) {
 		db, err := configdb.New(info)
 		if err != nil {
 			mu.mutex.Unlock()
-			return nil, fmt.Errorf("repo lock open %v error %w", db.InfoType(), err)
+			return nil, fmt.Errorf("repo lock open %v error %w", dbscan.Config, err)
 		}
 		return db, nil
 	case dbscan.TrueZnak:
 		db, err := znakdb.New(info)
 		if err != nil {
 			mu.mutex.Unlock()
-			return nil, fmt.Errorf("repo lock open %v error %w", db.InfoType(), err)
+			return nil, fmt.Errorf("repo lock open %v error %w", dbscan.TrueZnak, err)
 		}
 		return db, nil
 	default:

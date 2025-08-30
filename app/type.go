@@ -188,8 +188,7 @@ func createPath(path string, home string) (string, error) {
 
 func pathCreate(path string) error {
 	if path != "" {
-		// if err := os.MkdirAll(path, os.ModePerm); err != nil { // создает весь путь
-		if err := os.Mkdir(path, os.ModePerm); err != nil {
+		if err := os.MkdirAll(path, 0o755); err != nil {
 			return err
 		}
 	}
@@ -219,8 +218,12 @@ func (a *app) LogPath() string {
 }
 
 func (a *app) BaseUrl() string {
-	uri := fmt.Sprintf("http://%s:%s", a.options.Hostname, a.options.HostPort)
-	return uri
+	host := a.options.Hostname
+	port := a.options.HostPort
+	if port == "" || port == "auto" {
+		return fmt.Sprintf("http://%s", host)
+	}
+	return fmt.Sprintf("http://%s:%s", host, port)
 }
 
 func (a *app) DbSelfPath() string {

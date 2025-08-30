@@ -39,42 +39,30 @@ func (a *GuiApp) logg(s, e string) {
 // вызывать из gorutine
 // из основного потока вызывать только как go
 func (a *GuiApp) SendError(s string) {
-	sending := false
+	// non-blocking send; drop if buffer full
 	msg := LogMsg{
 		Error: true,
 		Msg:   s,
 	}
 	a.Logger().Error(s)
-	for {
-		select {
-		case a.logCh <- msg:
-			sending = true
-		default:
-			// message dropped
-		}
-		if sending {
-			break
-		}
+	select {
+	case a.logCh <- msg:
+	default:
+		// drop
 	}
 }
 
 // вызывать из gorutine
 // из основного потока вызывать только как go
 func (a *GuiApp) SendLog(s string) {
-	sending := false
+	// non-blocking send; drop if buffer full
 	msg := LogMsg{
 		Error: false,
 		Msg:   s,
 	}
-	for {
-		select {
-		case a.logCh <- msg:
-			sending = true
-		default:
-			// message dropped
-		}
-		if sending {
-			break
-		}
+	select {
+	case a.logCh <- msg:
+	default:
+		// drop
 	}
 }

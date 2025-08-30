@@ -3,11 +3,9 @@ package repo
 import "github.com/mechiko/dbscan"
 
 func (r *Repository) Ping(t dbscan.DbInfoType) (result bool) {
-	defer func() {
-		if rec := recover(); rec != nil {
-			result = false
-		}
-	}()
+	if r == nil || r.dbs == nil {
+		return false
+	}
 	info := r.dbs.Info(t)
 	if info == nil {
 		return false

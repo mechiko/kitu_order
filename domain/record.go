@@ -18,13 +18,21 @@ type Record struct {
 	Serial   string
 }
 
+// вставляем GS в файлах от криницы, там он опущен...
+// это только для пива!!!
 func NewRecord(row []string) (*Record, error) {
 	if len(row) != 5 {
 		return nil, fmt.Errorf("записей не равно 5")
 	}
 	s := row[0]
-	fakeCode := s[:25] + "\x1D" + s[25:]
-	cis, err := utility.ParseCisInfo(fakeCode)
+	// Insert GS only when absent and length is sufficient
+	if !strings.ContainsRune(s, rune(29)) {
+		if len(s) < 26 {
+			return nil, fmt.Errorf("некорректная длина КМ %d (<26)", len(s))
+		}
+		s = s[:25] + "\x1D" + s[25:]
+	}
+	cis, err := utility.ParseCisInfo(s)
 	if err != nil {
 		return nil, fmt.Errorf("получение КМ %w", err)
 	}

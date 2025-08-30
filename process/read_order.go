@@ -41,13 +41,16 @@ func (k *Krinica) ReadOrder() (err error) {
 			return err
 		}
 	}
+	// Build a local slice, then assign once
+	cisParsed := make([]*utility.CisInfo, 0, len(arr))
 	for _, cis := range arr {
 		item, err := utility.ParseCisInfo(cis.Code)
 		if err != nil {
-			return fmt.Errorf("parse cis cis:%s %w", cis.Code, err)
+			return fmt.Errorf("parse cis code:%s %w", cis.Code, err)
 		}
-		k.Cis = append(k.Cis, item)
+		cisParsed = append(cisParsed, item)
 	}
+	k.Cis = cisParsed
 	_ = reductor.Instance().SetModel("", model)
 	return nil
 }

@@ -2,13 +2,11 @@ package gui
 
 import (
 	"fmt"
-	"kitu/config"
 	"kitu/process/protocol"
 	"kitu/reductor"
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/mechiko/utility"
@@ -68,7 +66,7 @@ func (a *GuiApp) generate() {
 		a.SendError(fmt.Sprintf("нет КМ из заказа %d", model.Order))
 		return
 	}
-	a.SendLog(fmt.Sprintf("для заказа %d взято %d КМ", len(a.krinica.Cis), model.Order))
+	a.SendLog(fmt.Sprintf("для заказа %d взято %d КМ", model.Order, len(a.krinica.Cis)))
 	if err := a.krinica.GeneratePalletOrder(); err != nil {
 		a.SendError(fmt.Sprintf("ошибка генерации палетт: %s", err.Error()))
 		return
@@ -103,12 +101,17 @@ func (a *GuiApp) generate() {
 			dir = a.Options().Output
 		}
 		url := filepath.Join(dir, fileName)
-		if err := os.WriteFile(url, fileTxt, os.ModePerm); err != nil {
-			a.logg("", err.Error())
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			a.SendError(fmt.Sprintf("ошибка создания каталога %q: %s", dir, err.Error()))
+			return
 		}
-		Open(url)
-		if strings.ToLower(config.Mode) == "production" {
-			OpenDir(dir)
+		if err := os.WriteFile(url, fileTxt, 0o644); err != nil {
+			a.SendError(fmt.Sprintf("ошибка записи файла %q: %s", url, err.Error()))
+			return
+		}
+		if err := OpenDir(url); err != nil {
+			a.SendError(fmt.Sprintf("ошибка открытия файла: %s", err.Error()))
+			return
 		}
 	}
 }

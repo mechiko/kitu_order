@@ -1,6 +1,7 @@
 package reductor
 
 import (
+	"errors"
 	"fmt"
 	"kitu/domain"
 )
@@ -30,12 +31,26 @@ type Message struct {
 }
 
 func (m *Model) Sync(cfg domain.Apper) error {
-	cfg.SaveOptions("entirely", m.Entirely)
-	cfg.SaveOptions("statuskm", m.StatusKM)
-	// cfg.SaveOptions("inn", m.Inn)
-	cfg.SaveOptions("ssccprefix", m.PrefixSSCC)
-	cfg.SaveOptions("ssccstartnumber", m.StartNumberSSCC)
-	cfg.SaveOptions("perpallet", m.PerPallet)
+	var agg error
+	if err := cfg.SaveOptions("entirely", m.Entirely); err != nil {
+		agg = errors.Join(agg, err)
+	}
+	if err := cfg.SaveOptions("statuskm", m.StatusKM); err != nil {
+		agg = errors.Join(agg, err)
+	}
+	// if err := cfg.SaveOptions("inn", m.Inn); err != nil { agg = errors.Join(agg, err) }
+	if err := cfg.SaveOptions("ssccprefix", m.PrefixSSCC); err != nil {
+		agg = errors.Join(agg, err)
+	}
+	if err := cfg.SaveOptions("ssccstartnumber", m.StartNumberSSCC); err != nil {
+		agg = errors.Join(agg, err)
+	}
+	if err := cfg.SaveOptions("perpallet", m.PerPallet); err != nil {
+		agg = errors.Join(agg, err)
+	}
+	if agg != nil {
+		return fmt.Errorf("save options: %w", agg)
+	}
 	return cfg.SaveAllOptions()
 }
 

@@ -1,7 +1,6 @@
 package znakdb
 
 import (
-	"errors"
 	"fmt"
 	"kitu/domain"
 	"kitu/reductor"
@@ -14,16 +13,18 @@ const maxCountPerReportUtilisation = 300000
 
 // запись отчета нанесения
 func (z *DbZnak) WriteUtilisation(cises []*domain.Record, model *reductor.Model, prod, exp time.Time) (rid int64, err error) {
-	defer func() {
-		if errRecover := recover(); errRecover != nil {
-			if err != nil {
-				err = errors.Join(err, fmt.Errorf("%w", errRecover))
-			} else {
-				err = fmt.Errorf("%s %v", modError, errRecover)
-			}
-		}
-	}()
-
+	if model == nil {
+		return 0, fmt.Errorf("%s model is nil", modError)
+	}
+	if len(cises) == 0 {
+		return 0, fmt.Errorf("%s no records to write", modError)
+	}
+	if prod.IsZero() || exp.IsZero() {
+		return 0, fmt.Errorf("%s production/expiration dates must be set", modError)
+	}
+	if exp.Before(prod) {
+		return 0, fmt.Errorf("%s expiration date before production date", modError)
+	}
 	sess := z.dbSession
 	err = sess.Tx(func(tx db.Session) error {
 		indexUtilisation := 0

@@ -57,7 +57,7 @@ func (z *DbZnak) WritePallets(pallets map[string][]*utility.CisInfo, model reduc
 		}
 		return nil
 	})
-	return nil
+	return err
 }
 
 func (z *DbZnak) writePallet(tx db.Session, pallet string, cis []*utility.CisInfo, opts map[string]string) (err error) {

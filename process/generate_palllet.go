@@ -42,16 +42,16 @@ func (k *Krinica) GeneratePalletOrder() error {
 			break
 		}
 		lastSSCC = startSSCC + indexPallet
-		pallet, err := k.GenerateSSCC(lastSSCC, model.PrefixSSCC)
+		pallet, err := utility.GenerateSSCC(lastSSCC, model.PrefixSSCC)
 		if err != nil {
 			return fmt.Errorf("generate sscc error %w", err)
 		}
 		// ищем такую палетту в БД
 		plt, err := dbZnak.FindPallet(pallet)
-		if !errors.Is(err, db.ErrNoMoreRows) {
-			return fmt.Errorf("поиск палеты %s ошибка БД", pallet)
+		if err != nil && !errors.Is(err, db.ErrNoMoreRows) {
+			return fmt.Errorf("поиск палеты %s ошибка БД: %w", pallet, err)
 		}
-		if plt != nil {
+		if err == nil && plt != nil {
 			return fmt.Errorf("паллета %s уже использована в БД", pallet)
 		}
 
