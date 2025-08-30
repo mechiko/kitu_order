@@ -49,7 +49,7 @@ func (z *DbZnak) WriteUtilisation(cises []*domain.Record, model *reductor.Model,
 func (z *DbZnak) writeUtilisation(tx db.Session, cis []*domain.Record, model *reductor.Model, prod, exp time.Time) (rid int64, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("panic %v", r)
+			err = fmt.Errorf("%s panic: %v", modError, r)
 		}
 	}()
 	report := &domain.Utilisation{

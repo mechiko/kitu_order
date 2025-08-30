@@ -77,7 +77,10 @@ func (z *DbZnak) writePallet(tx db.Session, pallet string, cis []*utility.CisInf
 	if err := tx.Collection("order_mark_aggregation").InsertReturning(agr); err != nil {
 		return err
 	} else {
-		for _, c := range cis {
+		for i, c := range cis {
+			if c == nil || c.Code == "" || c.Serial == "" {
+				return fmt.Errorf("aggregation %q: invalid cis[%d]: nil/empty serial/code", pallet, i)
+			}
 			code := &AggregationCode{
 				IdOrderMarkAggregation: int(agr.Id),
 				SerialNumber:           c.Serial,

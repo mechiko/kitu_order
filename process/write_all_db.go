@@ -27,7 +27,7 @@ func (k *Krinica) WritePallets() (retErr error) {
 	model := reductor.Instance().Model("")
 	model.Inn = k.inn
 	if err := dbZnak.WritePallets(k.Pallet, model); err != nil {
-		retErr = errors.Join(retErr, err)
+		retErr = errors.Join(retErr, fmt.Errorf("write pallets: %w", err))
 	}
 	return retErr
 }

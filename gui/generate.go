@@ -20,7 +20,6 @@ func (a *GuiApp) generate() {
 	}()
 	a.stateIsProcess <- true
 	model := reductor.Instance().Model("")
-	fmt.Println("generate:", a.order.Textvariable())
 	if order, err := strconv.ParseInt(a.order.Textvariable(), 10, 64); err != nil {
 		a.SendError(fmt.Sprintf("ошибка номера заказа: %s", err.Error()))
 		return
@@ -59,7 +58,7 @@ func (a *GuiApp) generate() {
 	// сброс
 	a.krinica.Reset()
 	if err := a.krinica.ReadOrder(); err != nil {
-		a.SendError(fmt.Sprintf("ошибка получение КМ из заказа: %s", err.Error()))
+		a.SendError(fmt.Sprintf("ошибка получения КМ из заказа: %s", err.Error()))
 		return
 	}
 	if len(a.krinica.Cis) == 0 {
@@ -109,7 +108,7 @@ func (a *GuiApp) generate() {
 			a.SendError(fmt.Sprintf("ошибка записи файла %q: %s", url, err.Error()))
 			return
 		}
-		if err := OpenDir(url); err != nil {
+		if err := OpenFile(url); err != nil {
 			a.SendError(fmt.Sprintf("ошибка открытия файла: %s", err.Error()))
 			return
 		}
