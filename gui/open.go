@@ -19,20 +19,16 @@ func Open(url string) error {
 
 // открываем в эксплорере текущую папку программы
 func OpenDir(dir string) (err error) {
-	if utility.PathOrFileExists(dir) {
-		if err := utility.OpenFileInShell(dir); err != nil {
-			return err
-		}
+	if !utility.PathOrFileExists(dir) {
+		return fmt.Errorf("path not found: %s", dir)
 	}
-	return nil
+	return utility.OpenFileInShell(dir)
 }
 
 // открываем в эксплорере файл по имени
 func OpenFile(file string) (err error) {
-	if utility.PathOrFileExists(file) {
-		if err := utility.OpenFileInShell(file); err != nil {
-			return err
-		}
+	if !utility.PathOrFileExists(file) {
+		return fmt.Errorf("file not found: %s", file)
 	}
-	return nil
+	return utility.OpenFileInShell(file)
 }

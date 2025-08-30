@@ -72,14 +72,17 @@ func (z *DbZnak) writeUtilisation(tx db.Session, cis []*domain.Record, model *re
 	if err := tx.Collection("order_mark_utilisation").InsertReturning(report); err != nil {
 		return 0, err
 	} else {
-		for i := range cis {
-			if cis[i] == nil || cis[i].Cis == nil {
-				return 0, fmt.Errorf("cis[%d]: nil record or CIS", i)
+		for i, rec := range cis {
+			if rec == nil || rec.Cis == nil {
+				return 0, fmt.Errorf("%s cis[%d]: nil record or CIS", modError, i)
+			}
+			if rec.Serial == "" || rec.Cis.Code == "" {
+				return 0, fmt.Errorf("%s cis[%d]: empty serial/code", modError, i)
 			}
 			km := &domain.UtilisationCodes{
 				IdOrderMarkUtilisation: report.Id,
-				SerialNumber:           cis[i].Serial,
-				Code:                   cis[i].Cis.Code,
+				SerialNumber:           rec.Serial,
+				Code:                   rec.Cis.Code,
 				Status:                 "Нанесён",
 			}
 			if _, err := tx.Collection("order_mark_utilisation_codes").Insert(km); err != nil {

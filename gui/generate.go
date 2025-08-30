@@ -22,34 +22,34 @@ func (a *GuiApp) generate() {
 	model := reductor.Instance().Model("")
 	fmt.Println("generate:", a.order.Textvariable())
 	if order, err := strconv.ParseInt(a.order.Textvariable(), 10, 64); err != nil {
-		a.SendError(fmt.Sprintf("ошибка номера заказа %s", err.Error()))
+		a.SendError(fmt.Sprintf("ошибка номера заказа: %s", err.Error()))
 		return
 	} else {
 		if order <= 0 {
-			a.SendError("ошибка номер заказ 0")
+			a.SendError("ошибка: номер заказа должен быть > 0")
 			return
 		}
 		model.Order = order
 	}
 	if perPalet, err := strconv.ParseInt(a.perPalet.Textvariable(), 10, 64); err != nil {
-		a.SendError(fmt.Sprintf("ошибка количества в палете %s", err.Error()))
+		a.SendError(fmt.Sprintf("ошибка количества в палете: %s", err.Error()))
 		return
 	} else {
 		model.PerPallet = int(perPalet)
 		if perPalet <= 0 {
-			a.SendError("ошибка количество в упаковке 0")
+			a.SendError("ошибка: количество в палете должно быть > 0")
 			return
 		}
 		// записываем модель
 		reductor.Instance().SetModel("", model)
 	}
 	if startNumber, err := strconv.ParseInt(a.startNumberSscc.Textvariable(), 10, 64); err != nil {
-		a.SendError(fmt.Sprintf("ошибка начального номера палеты %s", err.Error()))
+		a.SendError(fmt.Sprintf("ошибка начального номера палеты: %s", err.Error()))
 		return
 	} else {
 		model.StartNumberSSCC = int(startNumber)
 		if startNumber <= 0 {
-			a.SendError("ошибка начальный номер упаковки 0")
+			a.SendError("ошибка: начальный номер палеты должен быть > 0")
 			return
 		}
 		// записываем модель
@@ -59,7 +59,7 @@ func (a *GuiApp) generate() {
 	// сброс
 	a.krinica.Reset()
 	if err := a.krinica.ReadOrder(); err != nil {
-		a.SendError(fmt.Sprintf("ошибка получение КМ из заказа %s", err.Error()))
+		a.SendError(fmt.Sprintf("ошибка получение КМ из заказа: %s", err.Error()))
 		return
 	}
 	if len(a.krinica.Cis) == 0 {
@@ -68,16 +68,16 @@ func (a *GuiApp) generate() {
 	}
 	a.SendLog(fmt.Sprintf("для заказа %d взято %d КМ", model.Order, len(a.krinica.Cis)))
 	if err := a.krinica.GeneratePalletOrder(); err != nil {
-		a.SendError(fmt.Sprintf("ошибка генерации палетт: %s", err.Error()))
+		a.SendError(fmt.Sprintf("ошибка генерации палет: %s", err.Error()))
 		return
 	}
-	a.SendLog(fmt.Sprintf("сгенерировано %d палетт по %d шт.", len(a.krinica.Pallet), model.PerPallet))
+	a.SendLog(fmt.Sprintf("сгенерировано %d палет по %d шт.", len(a.krinica.Pallet), model.PerPallet))
 
 	if err := a.krinica.WritePallets(); err != nil {
 		a.SendError(fmt.Sprintf("ошибка записи в БД: %s", err.Error()))
 		return
 	}
-	a.SendLog("аггрегация записана в базу А3")
+	a.SendLog("агрегация записана в базу А3")
 
 	model = reductor.Instance().Model("")
 	// запишем значения следующей SSCC в конфиг
