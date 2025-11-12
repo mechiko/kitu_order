@@ -62,7 +62,7 @@ func (m *Model) Read(cfg domain.Apper) (err error) {
 	}()
 	m.Entirely = cfg.Options().Entirely
 	m.StatusKM = cfg.Options().StatusKM
-	// m.Inn = cfg.GetKeyString("inn")
+	// m.Inn = inn
 	m.PrefixSSCC = cfg.Options().SsccPrefix
 	m.StartNumberSSCC = cfg.Options().SsccStartNumber
 	m.PerPallet = cfg.Options().PerPallet
