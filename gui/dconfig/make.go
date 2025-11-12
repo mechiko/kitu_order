@@ -13,6 +13,7 @@ func (me *ConfigDialog) makeInputs() {
 	me.inputFrame = me.win.TFrame()
 	me.inn = me.inputFrame.TEntry(tk.Textvariable(me.data.Inn))
 	me.prefixSSCC = me.inputFrame.TEntry(tk.Textvariable(me.data.PrefixSSCC))
+	me.inn.Configure(tk.State("disabled"))
 }
 
 func (me *ConfigDialog) makeButtons() {

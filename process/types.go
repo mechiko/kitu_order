@@ -36,6 +36,9 @@ func New(app domain.Apper, repo domain.Repo) (*Krinica, error) {
 	if err != nil {
 		return nil, fmt.Errorf("find inn error %w", err)
 	}
+	if inn == "" {
+		return nil, fmt.Errorf("inn config.db empty error %w", err)
+	}
 	k := &Krinica{
 		Apper:    app,
 		repo:     repo,
