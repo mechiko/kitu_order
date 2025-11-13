@@ -92,7 +92,16 @@ func (a *GuiApp) makeButtons() {
 		}
 		a.startButton.Configure(tk.State("disabled"))
 		a.exitButton.Configure(tk.State("disabled"))
-		go a.generate()
+		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					a.Logger().Error("panic go func")
+				}
+			}()
+			a.generate()
+			a.Logger().Info("exit go generate")
+		}()
+
 	}))
 	a.configButton = a.buttonFrame.TButton(tk.Txt("Config…"),
 		tk.Command(a.onConfig))

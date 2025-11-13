@@ -14,11 +14,12 @@ import (
 
 func (a *GuiApp) generate() {
 	defer func() {
-		a.stateIsProcess <- false
+		a.Logger().Debug("defer generate()")
+		a.isProces = false
 		// по завершению обработки в БД кнопка Пуск запрещена
 		a.stateFinish <- struct{}{}
 	}()
-	a.stateIsProcess <- true
+	a.isProces = true
 	model := reductor.Instance().Model("")
 	if order, err := strconv.ParseInt(a.order.Textvariable(), 10, 64); err != nil {
 		a.SendError(fmt.Sprintf("ошибка номера заказа: %s", err.Error()))
@@ -72,7 +73,7 @@ func (a *GuiApp) generate() {
 	}
 	a.SendLog(fmt.Sprintf("сгенерировано %d палет по %d шт.", len(a.krinica.Pallet), model.PerPallet))
 
-	if err := a.krinica.WritePallets(); err != nil {
+	if err := a.krinica.WritePaletsForce(); err != nil {
 		a.SendError(fmt.Sprintf("ошибка записи в БД: %s", err.Error()))
 		return
 	}
@@ -84,6 +85,7 @@ func (a *GuiApp) generate() {
 	// model.StartNumberSSCC = model.LastSSCC
 	if err := model.Sync(a); err != nil {
 		a.SendError(fmt.Sprintf("ошибка model.Sync конфигурации: %s", err.Error()))
+		return
 	}
 	model.Date = time.Now().Format("2006-01-02")
 	// запоминаем модель уже когда палеты внесены в бд
