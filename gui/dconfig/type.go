@@ -1,7 +1,6 @@
 package dconfig
 
 import (
-	"fmt"
 	"strings"
 
 	tk "modernc.org/tk9.0"
@@ -40,8 +39,7 @@ func NewConfigDialog(data *ConfigDialogData) *ConfigDialog {
 
 func (me *ConfigDialog) onOk() {
 	me.data.Ok = true
-	// me.data.Inn = strings.Trim(me.inn.Textvariable(), " ")
-	me.data.PrefixSSCC = fmt.Sprintf("%010s", strings.Trim(me.prefixSSCC.Textvariable(), " "))
+	me.data.PrefixSSCC = strings.Trim(me.prefixSSCC.Textvariable(), " ")
 	tk.Destroy(me.win)
 }
 

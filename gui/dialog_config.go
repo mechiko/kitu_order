@@ -20,4 +20,5 @@ func (a *GuiApp) onConfig() {
 			a.Logger().Errorf("диалог onConfig синхронизация модели %v", err)
 		}
 	}
+	reductor.Instance().SetModel("", model)
 }

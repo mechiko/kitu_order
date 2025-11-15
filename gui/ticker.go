@@ -29,10 +29,12 @@ func (a *GuiApp) tick() {
 		a.startNumberSscc.Configure(tk.Textvariable(fmt.Sprintf("%d", model.StartNumberSSCC)))
 		a.startButton.Configure(tk.State("enabled"))
 		a.exitButton.Configure(tk.State("enabled"))
-	case a.isProces = <-a.stateIsProcess:
-		if a.isProces {
-			a.startButton.Configure(tk.State("disabled"))
-		}
+		a.Logger().Debug("stateFinish!")
+	// case a.isProces = <-a.stateIsProcess:
+	// if a.isProces {
+	// 	a.startButton.Configure(tk.State("disabled"))
+	// }
+	// a.Logger().Debugf("stateIsProcess %v", a.isProces)
 	default:
 	}
 }

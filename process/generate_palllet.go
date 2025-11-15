@@ -42,10 +42,14 @@ func (k *Krinica) GeneratePalletOrder() error {
 			break
 		}
 		lastSSCC = startSSCC + indexPallet
+		if len(model.PrefixSSCC) < 7 {
+			model.PrefixSSCC = fmt.Sprintf("%07s", model.PrefixSSCC)
+		}
 		pallet, err := utility.GenerateSSCC(lastSSCC, model.PrefixSSCC)
 		if err != nil {
 			return fmt.Errorf("generate sscc error %w", err)
 		}
+
 		// ищем такую палетту в БД
 		plt, err := dbZnak.FindPallet(pallet)
 		if err != nil && !errors.Is(err, db.ErrNoMoreRows) {
@@ -58,6 +62,7 @@ func (k *Krinica) GeneratePalletOrder() error {
 		if _, ok := k.Pallet[pallet]; ok {
 			return fmt.Errorf("паллета %s уже сгенерирована прежде в обработке", pallet)
 		}
+		k.Sscc = append(k.Sscc, pallet)
 		k.Pallet[pallet] = cis
 		if model.Entirely {
 			break
