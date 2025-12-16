@@ -84,24 +84,24 @@ func (k *Krinica) WritePaletsForce() (err error) {
 			return nil
 		}
 	})
-	return nil
+	return err
 }
 
-func (k *Krinica) writePaletForce(tx db.Session, agr *Aggregation, palet string, cis []*utility.CisInfo) (err error) {
+func (k *Krinica) writePaletForce(tx db.Session, agr *Aggregation, palet string, cises []*utility.CisInfo) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("panic %v", r)
 		}
 	}()
-	for i := range cis {
+	for i := range cises {
 		cis := &AggregationCode{
 			IdOrderMarkAggregation:  int(agr.Id),
-			SerialNumber:            cis[i].Serial,
-			Code:                    cis[i].Cis,
+			SerialNumber:            cises[i].Serial,
+			Code:                    cises[i].Cis,
 			Status:                  "Импортирован",
 			UnitSerialNumber:        palet,
-			AggregationUnitCapacity: fmt.Sprintf("%d", len(cis)),
-			AggregatedItemsCount:    fmt.Sprintf("%d", len(cis)),
+			AggregationUnitCapacity: fmt.Sprintf("%d", len(cises)),
+			AggregatedItemsCount:    fmt.Sprintf("%d", len(cises)),
 		}
 		if _, err := tx.Collection("order_mark_aggregation_codes").Insert(cis); err != nil {
 			return err
