@@ -12,14 +12,14 @@ default:
 
 win64:
     #!{{shebang}}
-    $env:Path = "C:\Go\go.124\bin;C:\go\gcc\mingw64\bin;" + $env:Path
+    $env:Path = "C:\Go\go.125\bin;C:\go\gcc\mingw64\bin;" + $env:Path
     $env:GOARCH = "amd64"
     $env:GOOS = "windows"
     $env:CGO_ENABLED = 1
     if (-Not (Test-Path go.mod)) {
       go mod init {{mod_name}}
     }
-    go mod tidy -go 1.24.0 -v
+    go mod tidy -go 1.25.0 -v
     if(-Not $?) { exit }
     Remove-Item {{dist}}\{{exe_name}}.exe, {{dist}}\{{exe_name}}_64.exe 2>$null
     go build -ldflags="{{ld_flags}}" -o {{dist}}\{{exe_name}}_64.exe ./cmd
